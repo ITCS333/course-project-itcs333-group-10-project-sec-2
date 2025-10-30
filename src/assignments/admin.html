@@ -9,19 +9,20 @@
 <html lang="en">
 <head>
     <!-- TODO: Add the 'meta' tag for character encoding (UTF-8). -->
-    
+    <meta charset="UTF-8">
     <!-- TODO: Add the responsive 'viewport' meta tag. -->
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TODO: Add a title, e.g., "Manage Assignments". -->
-
+<title>Manage Assignments</title>
     <!-- TODO: Link to your CSS framework or stylesheet. -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <!-- TODO: Create a 'header' with a main heading ('h1') "Manage Assignments". -->
-
+<h1>Manage Assignments</h1>
     <!-- TODO: Create the 'main' content area. -->
-
+<main>
         <!-- Section 1: Add/Edit Assignment Form -->
         <!-- TODO: Create a 'section' for the form. -->
             <!-- TODO: Add a sub-heading ('h2') "Add a New Assignment". -->
@@ -51,7 +52,27 @@
                 <!-- End of fieldset. -->
             <!-- End of form. -->
         <!-- End of form section. -->
-
+<section1>
+    <h2>Add a New Assignment</h2>
+    <form id="assignment-form">
+        <fieldset>
+            <legend>Assignment Details</legend>
+            <lable for="assignment-title">assignment-title :</lable>
+            <input id="assignment-title" type="text" required>
+            <br>
+            <label for="assignment-description">assignment-description</label>
+            <textarea id="assignment-description", rows="5", required></textarea>
+            <br>
+            <label for="assignment-due-date">assignment-due-date</label>
+            <input id="assignment-due-date" type="date" required>
+            <br>
+            <label for="assignment-files">assignment-files or links (one per line)</label>
+            <textarea id="assignment-files" rows="3"></textarea>
+            <br>
+            <button id="add-assignment" type="submit">Add Assignment</button>
+        </fieldset>
+    </form>
+</section1>
 
         <!-- Section 2: Existing Assignments List -->
         <!-- TODO: Create a 'section' to display the list of current assignments. -->
@@ -76,7 +97,41 @@
                 <!-- End of tbody. -->
             <!-- End of table. -->
         <!-- End of list section. -->
+<section2>
+<h2>Current Assignments</h2>
+<table id="assignments-table">
+<thead>
+    <tr>
+        <th>Title</th>
+        <th>Due Date</th>
+        <th>Actions</th>
+    </tr>
+</thead>
+<tbody>
+<tr>
+    <td>HTML Basics</td>
+    <td>2025-10-25</td>
 
+<td>
+    <button>Edit</button>
+    <button>Delete</button>
+</td>
+</tr>
+<tr>
+    <td>CSS Basics</td>
+    <td>2025-10-26</td>
+
+<td>
+    <button>Edit</button>
+    <button>Delete</button>
+</td>
+</tr>
+</tbody>
+</table>
+</section2>
+
+  
     <!-- End of main. -->
+  </main>
 </body>
 </html>
