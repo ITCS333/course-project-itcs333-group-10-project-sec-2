@@ -11,15 +11,16 @@
   3. Implement the TODOs below.
 */
 
+
 // --- Global Data Store ---
 // This will hold the assignments loaded from the JSON file.
 let assignments = [];
 
 // --- Element Selections ---
 // TODO: Select the assignment form ('#assignment-form').
-
+let assignmentForm = document.getElementById("assignment-form");
 // TODO: Select the assignments table body ('#assignments-tbody').
-
+let assignmentsTbody = document.getElementById("assignments-tbody");
 // --- Functions ---
 
 /**
@@ -34,6 +35,44 @@ let assignments = [];
  */
 function createAssignmentRow(assignment) {
   // ... your implementation here ...
+  const { id, title, dueDate } = assignment;
+
+  // Create table row
+  const tr = document.createElement('tr');
+
+  // Title cell
+  const titleTd = document.createElement('td');
+  titleTd.textContent = title;
+
+  // Due date cell
+  const dateTd = document.createElement('td');
+  dateTd.textContent = dueDate;
+
+  // Actions cell
+  const actionsTd = document.createElement('td');
+
+  // Edit button
+  const editBtn = document.createElement('button');
+  editBtn.textContent = 'Edit';
+  editBtn.classList.add('edit-btn');
+  editBtn.dataset.id = id; // sets data-id
+
+  // Delete button
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = 'Delete';
+  deleteBtn.classList.add('delete-btn');
+  deleteBtn.dataset.id = id;
+
+  // Append buttons to actions cell
+  actionsTd.appendChild(editBtn);
+  actionsTd.appendChild(deleteBtn);
+
+  // Append all cells to the row
+  tr.appendChild(titleTd);
+  tr.appendChild(dateTd);
+  tr.appendChild(actionsTd);
+
+  return tr;
 }
 
 /**
@@ -46,6 +85,16 @@ function createAssignmentRow(assignment) {
  */
 function renderTable() {
   // ... your implementation here ...
+  assignmentsTbody.innerHTML = '';
+
+  // 2. Loop through global assignments array
+  assignments.forEach(assignment => {
+    // 3. Create a row for each assignment
+    const row = createAssignmentRow(assignment);
+
+    // Append row to tbody
+    assignmentsTbody.appendChild(row);
+  });
 }
 
 /**
@@ -61,6 +110,32 @@ function renderTable() {
  */
 function handleAddAssignment(event) {
   // ... your implementation here ...
+  // 1. Prevent page reload on submit
+  event.preventDefault();
+
+  // 2. Get form input values
+  const title = document.getElementById("assignment-title").value;
+  const description = document.getElementById("assignment-description").value;
+  const dueDate = document.getElementById("assignment-due-date").value;
+  const files = document.getElementById("assignment-files").value; // or .files if needed
+
+  // 3. Create assignment object with unique ID
+  const newAssignment = {
+    id: `asg_${Date.now()}`,
+    title: this.title,
+    description: this.description,
+    dueDate: this.dueDate,
+    files: this.files
+  };
+
+  // 4. Add to global assignments array
+  assignments.push(newAssignment);
+
+  // 5. Refresh the table
+  renderTable();
+
+  // 6. Reset form
+  event.target.reset();
 }
 
 /**
@@ -75,6 +150,18 @@ function handleAddAssignment(event) {
  */
 function handleTableClick(event) {
   // ... your implementation here ...
+  // 1. Check if a delete button was clicked
+  if (event.target.classList.contains("delete-btn")) {
+    
+    // 2. Get the ID from data-id
+    const idToDelete = event.target.dataset.id;
+
+    // 3. Remove this assignment from the global array
+    assignments = assignments.filter(assignment => assignment.id !== idToDelete);
+
+    // 4. Re-render the table
+    renderTable();
+  }
 }
 
 /**
@@ -89,6 +176,26 @@ function handleTableClick(event) {
  */
 async function loadAndInitialize() {
   // ... your implementation here ...
+  try {
+    // 1. Fetch assignments.json
+    const response = await fetch('assignments.json');
+
+    // 2. Parse JSON and store in global array
+    const data = await response.json();
+    assignments = data; // overwrite global
+
+    // 3. Render table initially
+    renderTable();
+
+    // 4. Add submit listener to the form
+    assignmentForm.addEventListener('submit', handleAddAssignment);
+
+    // 5. Add click listener to table body (for edit/delete)
+    assignmentsTbody.addEventListener('click', handleTableClick);
+
+  } catch (error) {
+    console.error('Error loading assignments:', error);
+  }
 }
 
 // --- Initial Page Load ---
