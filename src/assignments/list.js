@@ -83,7 +83,7 @@ async function loadAssignments() {
     });
 
   } catch (error) {
-    assignmentListSection.innerHTML = "<p>Error loading assignments.</p>";
+    assignmentListSection.innerHTML = "<h1>Error loading assignments.</h1>";
     console.error(error);
   }
 }
