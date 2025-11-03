@@ -122,10 +122,10 @@ function handleAddAssignment(event) {
   // 3. Create assignment object with unique ID
   const newAssignment = {
     id: `asg_${Date.now()}`,
-    title: this.title,
-    description: this.description,
-    dueDate: this.dueDate,
-    files: this.files
+    title: title,
+    description: description,
+    dueDate: dueDate,
+    files: files
   };
 
   // 4. Add to global assignments array
@@ -176,13 +176,18 @@ function handleTableClick(event) {
  */
 async function loadAndInitialize() {
   // ... your implementation here ...
+  
+  
   try {
     // 1. Fetch assignments.json
-    const response = await fetch('assignments.json');
+    const response = await fetch('api/assignments.json');
+    if (!response.ok) {
+            throw new Error("Error");
+        }
 
     // 2. Parse JSON and store in global array
     const data = await response.json();
-    assignments = data; // overwrite global
+   assignments.push(...data);// overwrite global
 
     // 3. Render table initially
     renderTable();
