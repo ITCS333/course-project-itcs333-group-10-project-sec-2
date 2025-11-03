@@ -68,7 +68,7 @@ async function loadAssignments() {
 
    try {
     // 1. Fetch JSON data
-    const response = await fetch("assignments.json");
+    const response = await fetch("api/assignments.json");
 
     // 2. Parse data
     const assignments = await response.json();

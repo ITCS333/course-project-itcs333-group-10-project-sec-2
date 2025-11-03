@@ -175,12 +175,12 @@ async function initializePage() {
   try {
     // Load both JSON files
     const [assignRes, commentsRes] = await Promise.all([
-      fetch("assignments.json"),
-      fetch("comments.json")
+      fetch("api/assignments.json"),
+      fetch("api/comments.json")
     ]);
     const assignments = await assignRes.json();
     const commentsData = await commentsRes.json();
-     const assignment = assignments.find(a => a.id === currentAssignmentId);
+     const assignment = assignments.find(a => String(a.id) === String(currentAssignmentId));
      currentComments = commentsData[currentAssignmentId] || [];
 
       if (!assignment) {
