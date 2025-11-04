@@ -3,7 +3,16 @@
 # ITCS333 Course Page
 
 ## The names and student IDs of all team members.
-
+202309994 - MOHSIN ALI SAAD ALABBAS <br> 
+202309507 - HUSAIN ALI AHMED ALAHMED <br>
+202307977 - AHMED ALI HASAN MARDHI MOHAMED ALI <br>
+202308207 - HADI ALI ABDULHASAN ALSAFI <br>
+202310536 - ALAA WAHEED ISMAEEL AHMED <br>
 ## A table indicating which student was responsible for which task.
+AHMED - TASK 1 <br>
+HADI - TASK 2 <br>
+HUSAIN - TASK 3 <br>
+MOHSIN - TASK 4 <br>
+ALAA - TASK 5 <br>
 
 ## A link to your live, hosted application on Replit.
