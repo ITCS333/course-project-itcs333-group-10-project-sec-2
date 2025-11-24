@@ -18,12 +18,16 @@
 // the HTML document is parsed before this script runs.
 
 // TODO: Select the login form. (You'll need to add id="login-form" to the <form> in your HTML).
+let form = document.querySelector("#login-form");
 
 // TODO: Select the email input element by its ID.
+let email = document.querySelector("#email");
 
 // TODO: Select the password input element by its ID.
+let password = document.querySelector("#password"); 
 
 // TODO: Select the message container element by its ID.
+let messageContainer = document.querySelector("#message-container");
 
 // --- Functions ---
 
@@ -40,6 +44,8 @@
  */
 function displayMessage(message, type) {
   // ... your implementation here ...
+  messageContainer.textContent = message;
+  messageContainer.className = type;
 }
 
 /**
@@ -56,6 +62,8 @@ function displayMessage(message, type) {
  */
 function isValidEmail(email) {
   // ... your implementation here ...
+  const regex = /\S+@\S+\.\S+/;
+  return regex.test(email);
 }
 
 /**
@@ -70,6 +78,10 @@ function isValidEmail(email) {
  */
 function isValidPassword(password) {
   // ... your implementation here ...
+  if(password.length >= 8){
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -88,6 +100,23 @@ function isValidPassword(password) {
  */
 function handleLogin(event) {
   // ... your implementation here ...
+  event.preventDefault();
+  let emailInput = email.value.trim();
+  let passwordInput = password.value.trim();
+  if(!isValidEmail(emailInput))
+    {
+      displayMessage("Invalid emal format.", "error");
+      return;
+    }
+
+  if(!isValidPassword(passwordInput)){
+    displayMessage("Password must be at least 8 characters.", "error");
+    return;
+  }
+  displayMessage("Login successfull!", "success");
+  email.value = "";
+  password.value = "";
+  
 }
 
 /**
@@ -100,6 +129,9 @@ function handleLogin(event) {
  */
 function setupLoginForm() {
   // ... your implementation here ...
+  if(form){
+    form.addEventListener("submit", handleLogin);
+  }
 }
 
 // --- Initial Page Load ---
