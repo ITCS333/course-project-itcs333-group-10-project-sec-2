@@ -64,3 +64,24 @@ main {
     margin: 40px auto;
     padding: 20px;
 }
+
+/* Responsive Design */
+
+@media (max-width: 600px) {
+    nav,
+    main {
+        max-width: 95%;
+        margin: 20px auto;
+        padding: 15px;
+    }
+
+    nav a {
+        font-size: 0.95rem;
+        padding: 8px 10px;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+        padding: 16px 0;
+    }
+}
