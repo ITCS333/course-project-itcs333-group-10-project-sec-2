@@ -17,8 +17,10 @@ let weeks = [];
 
 // --- Element Selections ---
 // TODO: Select the week form ('#week-form').
+const weekForm = document.querySelector('#week-form');
 
 // TODO: Select the weeks table body ('#weeks-tbody').
+const weeksTableBody = document.querySelector('#weeks-tbody');
 
 // --- Functions ---
 
@@ -33,7 +35,36 @@ let weeks = [];
  * - A "Delete" button with class "delete-btn" and `data-id="${id}"`.
  */
 function createWeekRow(week) {
-  // ... your implementation here ...
+    const tr = document.createElement('tr');
+
+    // Title td
+    const titleTd = document.createElement('td');
+    titleTd.textContent = week.title;
+    tr.appendChild(titleTd);
+
+    // Description td
+    const descTd = document.createElement('td');
+    descTd.textContent = week.description;
+    tr.appendChild(descTd);
+
+    // Actions td
+    const actionsTd = document.createElement('td');
+
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.classList.add('edit-btn');
+    editBtn.dataset.id = week.id;
+    actionsTd.appendChild(editBtn);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.classList.add('delete-btn');
+    deleteBtn.dataset.id = week.id;
+    actionsTd.appendChild(deleteBtn);
+
+    tr.appendChild(actionsTd);
+
+    return tr;
 }
 
 /**
@@ -45,7 +76,11 @@ function createWeekRow(week) {
  * append the resulting <tr> to `weeksTableBody`.
  */
 function renderTable() {
-  // ... your implementation here ...
+    weeksTableBody.innerHTML = '';
+    weeks.forEach(week => {
+        const row = createWeekRow(week);
+        weeksTableBody.appendChild(row);
+    });
 }
 
 /**
@@ -62,7 +97,27 @@ function renderTable() {
  * 7. Reset the form.
  */
 function handleAddWeek(event) {
-  // ... your implementation here ...
+    event.preventDefault();
+
+    const title = document.querySelector('#week-title').value.trim();
+    const startDate = document.querySelector('#week-start-date').value.trim();
+    const description = document.querySelector('#week-description').value.trim();
+    const links = document.querySelector('#week-links').value
+        .split('\n')
+        .map(link => link.trim())
+        .filter(link => link !== '');
+
+    const newWeek = {
+        id: `week_${Date.now()}`,
+        title,
+        startDate,
+        description,
+        links
+    };
+
+    weeks.push(newWeek);
+    renderTable();
+    weekForm.reset();
 }
 
 /**
@@ -76,7 +131,13 @@ function handleAddWeek(event) {
  * 4. Call `renderTable()` to refresh the list.
  */
 function handleTableClick(event) {
-  // ... your implementation here ...
+    const target = event.target;
+
+    if (target.classList.contains('delete-btn')) {
+        const id = target.dataset.id;
+        weeks = weeks.filter(week => week.id !== id);
+        renderTable();
+    }
 }
 
 /**
@@ -90,7 +151,19 @@ function handleTableClick(event) {
  * 5. Add the 'click' event listener to `weeksTableBody` (calls `handleTableClick`).
  */
 async function loadAndInitialize() {
-  // ... your implementation here ...
+    try {
+        const response = await fetch('weeks.json');
+        const data = await response.json();
+
+        weeks = data;
+        renderTable();
+
+        weekForm.addEventListener('submit', handleAddWeek);
+        weeksTableBody.addEventListener('click', handleTableClick);
+
+    } catch (error) {
+        console.error('Error loading weeks.json:', error);
+    }
 }
 
 // --- Initial Page Load ---
