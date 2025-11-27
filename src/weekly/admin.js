@@ -1,29 +1,26 @@
 /*
   Requirement: Make the "Manage Weekly Breakdown" page interactive.
-
   Instructions:
   1. Link this file to `admin.html` using:
      <script src="admin.js" defer></script>
-  
+ 
   2. In `admin.html`, add an `id="weeks-tbody"` to the <tbody> element
      inside your `weeks-table`.
-  
+ 
   3. Implement the TODOs below.
 */
-
 // --- Global Data Store ---
-// This will hold the weekly data loaded from the JSON file.
 let weeks = [];
+let editingId = null;
 
 // --- Element Selections ---
 // TODO: Select the week form ('#week-form').
 const weekForm = document.querySelector('#week-form');
-
 // TODO: Select the weeks table body ('#weeks-tbody').
 const weeksTableBody = document.querySelector('#weeks-tbody');
+const submitButton = document.querySelector('#add-week');
 
 // --- Functions ---
-
 /**
  * TODO: Implement the createWeekRow function.
  * It takes one week object {id, title, description}.
@@ -37,17 +34,14 @@ const weeksTableBody = document.querySelector('#weeks-tbody');
 function createWeekRow(week) {
     const tr = document.createElement('tr');
 
-    // Title td
     const titleTd = document.createElement('td');
     titleTd.textContent = week.title;
     tr.appendChild(titleTd);
 
-    // Description td
     const descTd = document.createElement('td');
     descTd.textContent = week.description;
     tr.appendChild(descTd);
 
-    // Actions td
     const actionsTd = document.createElement('td');
 
     const editBtn = document.createElement('button');
@@ -63,7 +57,6 @@ function createWeekRow(week) {
     actionsTd.appendChild(deleteBtn);
 
     tr.appendChild(actionsTd);
-
     return tr;
 }
 
@@ -78,8 +71,7 @@ function createWeekRow(week) {
 function renderTable() {
     weeksTableBody.innerHTML = '';
     weeks.forEach(week => {
-        const row = createWeekRow(week);
-        weeksTableBody.appendChild(row);
+        weeksTableBody.appendChild(createWeekRow(week));
     });
 }
 
@@ -91,7 +83,7 @@ function renderTable() {
  * 2. Get the values from the title, start date, and description inputs.
  * 3. Get the value from the 'week-links' textarea. Split this value
  * by newlines (`\n`) to create an array of link strings.
- * 4. Create a new week object with a unique ID (e.g., `id: \`week_${Date.now()}\``).
+ * 4. Create a new week object with a unique ID (e.g., `id: `week_${Date.now()}`).
  * 5. Add this new week object to the global `weeks` array (in-memory only).
  * 6. Call `renderTable()` to refresh the list.
  * 7. Reset the form.
@@ -100,22 +92,32 @@ function handleAddWeek(event) {
     event.preventDefault();
 
     const title = document.querySelector('#week-title').value.trim();
-    const startDate = document.querySelector('#week-start-date').value.trim();
+    const startDate = document.querySelector('#week-start-date').value;
     const description = document.querySelector('#week-description').value.trim();
-    const links = document.querySelector('#week-links').value
-        .split('\n')
-        .map(link => link.trim())
-        .filter(link => link !== '');
+    const linksValue = document.querySelector('#week-links').value;
+    const links = linksValue.split('\n').map(l => l.trim()).filter(l => l !== '');
 
-    const newWeek = {
-        id: `week_${Date.now()}`,
-        title,
-        startDate,
-        description,
-        links
-    };
+    if (editingId) {
+        const week = weeks.find(w => w.id === editingId);
+        if (week) {
+            week.title = title;
+            week.startDate = startDate;
+            week.description = description;
+            week.links = links;
+        }
+        submitButton.textContent = 'Add Week';
+        editingId = null;
+    } else {
+        const newWeek = {
+            id: `week_${Date.now()}`,
+            title,
+            startDate,
+            description,
+            links
+        };
+        weeks.push(newWeek);
+    }
 
-    weeks.push(newWeek);
     renderTable();
     weekForm.reset();
 }
@@ -137,6 +139,21 @@ function handleTableClick(event) {
         const id = target.dataset.id;
         weeks = weeks.filter(week => week.id !== id);
         renderTable();
+        return;
+    }
+
+    if (target.classList.contains('edit-btn')) {
+        const id = target.dataset.id;
+        const week = weeks.find(w => w.id === id);
+        if (week) {
+            document.querySelector('#week-title').value = week.title;
+            document.querySelector('#week-start-date').value = week.startDate || '';
+            document.querySelector('#week-description').value = week.description;
+            document.querySelector('#week-links').value = week.links ? week.links.join('\n') : '';
+
+            submitButton.textContent = 'Update Week';
+            editingId = id;
+        }
     }
 }
 
@@ -153,19 +170,18 @@ function handleTableClick(event) {
 async function loadAndInitialize() {
     try {
         const response = await fetch('weeks.json');
-        const data = await response.json();
-
-        weeks = data;
-        renderTable();
-
-        weekForm.addEventListener('submit', handleAddWeek);
-        weeksTableBody.addEventListener('click', handleTableClick);
-
-    } catch (error) {
-        console.error('Error loading weeks.json:', error);
+        if (response.ok) {
+            weeks = await response.json();
+        }
+    } catch (err) {
+        console.error('Could not load weeks.json', err);
     }
+
+    renderTable();
+
+    weekForm.addEventListener('submit', handleAddWeek);
+    weeksTableBody.addEventListener('click', handleTableClick);
 }
 
 // --- Initial Page Load ---
-// Call the main async function to start the application.
 loadAndInitialize();
