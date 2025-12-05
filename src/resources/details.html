@@ -1,62 +1,61 @@
+<!--
+  Requirement: Create the Dedicated Page for a Single Resource
+
+  Instructions:
+  This page displays the details for one resource and allows for discussion.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- TODO: Add meta tags for charset and viewport. -->
+    <!-- Meta tags for charset and viewport -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- TODO: Add a title. -->
+    <!-- Page title -->
     <title>Resource Details</title>
 
-    <!-- TODO: Link to your CSS framework or stylesheet. -->
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Link to your CSS framework or custom stylesheet -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <!-- TODO: Create a header with a main heading. -->
+    <!-- Header with main heading -->
     <header>
-        <h1>Chapter 1 Notes</h1>
+        <h1 id="resource-title">Resource Title</h1>
     </header>
 
-    <!-- TODO: Create the main content area. -->
+    <!-- Main content -->
     <main>
 
         <!-- Section 1: Resource Information -->
         <article>
-            <!-- TODO: Add resource description. -->
-            <p>This chapter provides an introduction to foundational concepts. It includes summaries, diagrams, and key points.</p>
-
-            <!-- TODO: Add link to actual resource. -->
-            <a href="https://example.com" target="_blank">Access Resource Material</a>
+            <!-- Resource description -->
+            <p id="resource-description">Resource description goes here.</p>
+            <!-- Link to access resource -->
+            <a id="resource-link" href="#" target="_blank">Access Resource Material</a>
         </article>
 
         <!-- Section 2: Discussion Forum -->
         <section id="discussion-forum">
             <h2>Discussion</h2>
 
-            <!-- Existing Comments -->
-            <div id="comments-container">
-
-                <!-- Comment 1 -->
-                <article>
+            <!-- Subsection 2.1: Existing Comments -->
+            <div id="comment-list">
+                <!-- Example Comment 1 -->
+                <!--
+                <article class="comment">
                     <p>This was very helpful, thanks!</p>
                     <footer>Posted by: Jane Doe</footer>
                 </article>
-
-                <!-- Comment 2 -->
-                <article>
-                    <p>Can someone explain the diagram on page 3?</p>
-                    <footer>Posted by: John Smith</footer>
-                </article>
-
+                -->
+                <!-- Example Comment 2 -->
             </div>
 
-            <!-- Add Comment Form -->
-            <form action="#">
+            <!-- Subsection 2.2: Add a Comment Form -->
+            <form id="comment-form" action="#">
                 <fieldset>
                     <legend>Leave a Comment</legend>
 
-                    <label for="new-comment">Your Comment:</label>
+                    <label for="new-comment">Your Comment</label>
                     <textarea id="new-comment" required></textarea>
 
                     <button type="submit">Post Comment</button>
@@ -66,5 +65,7 @@
 
     </main>
 
+    <!-- Link to JavaScript file -->
+    <script src="details.js" defer></script>
 </body>
 </html>
