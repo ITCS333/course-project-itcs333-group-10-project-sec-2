@@ -865,8 +865,3 @@ function isValidResource($resource) {
 }
 
 ?>
-<!--
-  Requirement: Navigation Links
-
-  Instructions:
-  Add navigation links to the discussion board page.
