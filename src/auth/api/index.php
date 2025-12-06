@@ -11,61 +11,111 @@
 // TODO: Start a PHP session using session_start()
 // This must be called before any output is sent to the browser
 // Sessions allow us to store user data across multiple pages
+session_start();
 
 
 // --- Set Response Headers ---
 // TODO: Set the Content-Type header to 'application/json'
 // This tells the browser that we're sending JSON data back
-
+header('Content-Type: application/json');
 
 // TODO: (Optional) Set CORS headers if your frontend and backend are on different domains
 // You'll need headers for Access-Control-Allow-Origin, Methods, and Headers
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 
 
 // --- Check Request Method ---
 // TODO: Verify that the request method is POST
 // Use the $_SERVER superglobal to check the REQUEST_METHOD
 // If the request is not POST, return an error response and exit
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
 
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Invalid request method. POST required.'
+    ]);
+
+    // Stop further execution
+    exit();
+}
 
 // --- Get POST Data ---
 // TODO: Retrieve the raw POST data
 // The Fetch API sends JSON data in the request body
 // Use file_get_contents with 'php://input' to read the raw request body
+$rawData = file_get_contents('php://input');
+
 
 
 // TODO: Decode the JSON data into a PHP associative array
 // Use json_decode with the second parameter set to true
+$data = json_decode($rawData, true);
+if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Invalid JSON format'
+    ]);
+    exit();
+}
 
 
 // TODO: Extract the email and password from the decoded data
 // Check if both 'email' and 'password' keys exist in the array
 // If either is missing, return an error response and exit
-
+if (!isset($data['email']) || !isset($data['password'])) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Email and password are required'
+    ]);
+    exit();
+}
 
 // TODO: Store the email and password in variables
 // Trim any whitespace from the email
+$email = trim($data['email']);
+$password = $data['password'];
 
 
 // --- Server-Side Validation (Optional but Recommended) ---
 // TODO: Validate the email format on the server side
 // Use the appropriate filter function for email validation
 // If invalid, return an error response and exit
-
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Invalid email format'
+    ]);
+    exit();
+}
 
 // TODO: Validate the password length (minimum 8 characters)
 // If invalid, return an error response and exit
-
+if (strlen($password) < 8) {
+    http_response_code(400);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Password must be at least 8 characters'
+    ]);
+    exit();
+}
 
 // --- Database Connection ---
 // TODO: Get the database connection using the provided function
 // Assume getDBConnection() returns a PDO instance with error mode set to exception
 // The function is defined elsewhere (e.g., in a config file or db.php)
+require_once 'db.php'; 
+$pdo = getDBConnection();
 
 
 // TODO: Wrap database operations in a try-catch block to handle PDO exceptions
 // This ensures you can return a proper JSON error response if something goes wrong
-
+try {
 
     // --- Prepare SQL Query ---
     // TODO: Write a SQL SELECT query to find the user by email
@@ -73,23 +123,27 @@
     // Use a WHERE clause to filter by email
     // IMPORTANT: Use a placeholder (? or :email) for the email value
     // This prevents SQL injection attacks
+    $sql = "SELECT id, name, email, password FROM users WHERE email = :email";
 
 
     // --- Prepare the Statement ---
     // TODO: Prepare the SQL statement using the PDO prepare method
     // Store the result in a variable
     // Prepared statements protect against SQL injection
+    $stmt = $pdo->prepare($sql);
 
 
     // --- Execute the Query ---
     // TODO: Execute the prepared statement with the email parameter
     // Bind the email value to the placeholder
+    $stmt->execute([':email' => $email]);
 
 
     // --- Fetch User Data ---
     // TODO: Fetch the user record from the database
     // Use the fetch method with PDO::FETCH_ASSOC
     // This returns an associative array of the user data, or false if no user found
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
     // --- Verify User Exists and Password Matches ---
@@ -103,6 +157,7 @@
     //
     // NOTE: This assumes passwords are stored as hashes using password_hash()
     // Never store passwords in plain text!
+    
 
 
     // --- Handle Successful Authentication ---
@@ -146,24 +201,67 @@
         
         
         // TODO: Exit the script
+    if ($user) {
+        if (password_verify($password, $user['password'])) {
+            // --- Handle Successful Authentication ---
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+            $_SESSION['user_email'] = $user['email'];
+            $_SESSION['logged_in'] = true;
 
+            $response = [
+                'success' => true,
+                'message' => 'Login successful',
+                'user' => [
+                    'id' => $user['id'],
+                    'name' => $user['name'],
+                    'email' => $user['email']
+                ]
+            ];
 
+            echo json_encode($response);
+            exit();
+        } else {
+            $response = [
+                'success' => false,
+                'message' => 'Invalid email or password'
+            ];
+            echo json_encode($response);
+            exit();
+        }
+    } else {
+    $response = [
+        'success' => false,
+        'message' => 'Invalid email or password'
+    ];
+    echo json_encode($response);
+    exit();
+    }
+
+} catch(PDOException $e){
 // TODO: Catch PDO exceptions in the catch block
 // Catch PDOException type
 
 
     // TODO: Log the error for debugging
     // Use error_log() to write the error message to the server error log
+    error_log("Database error: " . $e->getMessage());
+
     
     
     // TODO: Return a generic error message to the client
     // DON'T expose database details to the user for security reasons
     // Return a JSON response with success false and a generic message
+    echo json_encode([
+        'success' => false,
+        'message' => 'An internal server error occurred'
+    ]);
 
 
     // TODO: Exit the script
+    exit();
 
 
 // --- End of Script ---
-
+}
 ?>
