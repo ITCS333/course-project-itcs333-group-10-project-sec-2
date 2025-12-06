@@ -44,7 +44,7 @@
             <!-- TODO: Create a 'form' for changing the password. The 'action' can be '#'. -->
                 <!-- TODO: Use a 'fieldset' to group the password-related fields. -->
                     <!-- TODO: Add a 'legend' for the fieldset, e.g., "Password Update". -->
-                     <form action="#">
+                     <form action="#" id="password-form">
                         <fieldset>
                             <legend>Password Update</legend>
 
@@ -105,7 +105,7 @@
                 <!-- TODO: Create a 'form' for adding a new student. 'action' can be '#'. -->
                     <!-- TODO: Use a 'fieldset' to group the new student fields. -->
                         <!-- TODO: Add a 'legend' for the fieldset, e.g., "New Student Information". -->
-                         <form action="#">
+                         <form action="#" id="add-student-form">
                             <fieldset>
                                 <legend>New Student Information</legend>
 
@@ -122,16 +122,16 @@
                              - input 'id': "student-id"
                              - input 'type': "text"
                              - input: required -->
-                             <label for="student-id">Student ID</label>
-                             <input id="student-id" type="text" required>
+                                <label for="student-id">Student ID</label>
+                                <input id="student-id" type="text" required>
 
                         <!-- TODO: Add a 'label' and 'input' for the student's email.
                              - label 'for': "student-email"
                              - input 'id': "student-email"
                              - input 'type': "email"
                              - input: required -->
-                             <label for="student-email">Student Email</label>
-                             <input id="student-email" type="email" required>
+                                <label for="student-email">Student Email</label>
+                                <input id="student-email" type="email" required>
 
                         
                         <!-- TODO: Add a 'label' and 'input' for the default password.
@@ -139,15 +139,15 @@
                              - input 'id': "default-password"
                              - input 'type': "text"
                              - You can pre-fill this with a value like "password123" or leave it blank. -->
-                             <label for="default-password">Default password</label>
-                             <input id="default-password" type="text">
+                                <label for="default-password">Default password</label>
+                                <input id="default-password" type="text">
 
 
                         <!-- TODO: Add a 'button' to submit the form.
                              - type="submit"
                              - id="add"
                              - Text: "Add Student" -->
-                             <button type="submit" id="add">Add Student</button>
+                                <button type="submit" id="add">Add Student</button>
 
                             </fieldset>
                     <!-- End of the fieldset. -->
@@ -161,6 +161,9 @@
             <!-- TODO: Add a sub-heading (e.g., 'h3') for the list of students, "Registered Students". -->
              <section>
                 <h3>Registered Students</h3>
+                <!---- Search input field -->           
+                <label for="search-input">Search Students:</label>
+                <input type="text" id="search-input" placeholder="Search by name or ID">
 
             <!-- TODO: Create a 'table' to display the list of students. Give it an id="student-table". -->
                 <!-- TODO: Create a 'thead' for the table headers. -->
@@ -180,7 +183,7 @@
 
                 <!-- TODO: Create a 'tbody' for the table body, where student data will go. -->
                     <!-- TODO: For now, add 2-3 rows of dummy data so you can see how the table is structured. -->
-                     <tbody>
+                     <tbody id="student-tbody">
                     <!-- Example Student Row: -->
                     <!-- TODO: Create a 'tr' for a student record. -->
                         <tr>
@@ -219,6 +222,7 @@
         <!-- End of the student management section. -->
      </main>
     <!-- End of the main content area. -->
+     <script src="manage_users.js" defer></script>
 
 </body>
 </html>
