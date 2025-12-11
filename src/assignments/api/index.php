@@ -59,7 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(200); exit();
 
 
 // TODO: Create database connection
-
+require_once '../../common/Database.php';
+$database = new Database();
+$db = $database->getConnection();
 
 // TODO: Set PDO to throw exceptions on errors
 
