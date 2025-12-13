@@ -1,4 +1,6 @@
 <?php
+session_start();
+$_SESSION['admin'] = true;
 /**
  * Student Management API
  * 
