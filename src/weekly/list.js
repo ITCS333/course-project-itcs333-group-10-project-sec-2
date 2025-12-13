@@ -40,7 +40,7 @@ function createWeekArticle(week) {
     article.appendChild(pDesc);
 
     const a = document.createElement('a');
-    a.href = `details.html?id=${week.id}`;
+    a.href = `details.html?id=${encodeURIComponent(week.id)}`;
     a.textContent = 'View Details & Discussion';
     article.appendChild(a);
 
@@ -60,10 +60,16 @@ function createWeekArticle(week) {
  */
 async function loadWeeks() {
     try {
-        const response = await fetch('weeks.json');
+        const response = await fetch('api/weeks.json');
+        if (!response.ok) throw new Error('Failed to load weeks.json');
         const weeks = await response.json();
 
         listSection.innerHTML = '';
+
+        if (!Array.isArray(weeks) || weeks.length === 0) {
+            listSection.innerHTML = '<p>No weeks available.</p>';
+            return;
+        }
 
         weeks.forEach(week => {
             const article = createWeekArticle(week);
@@ -71,6 +77,7 @@ async function loadWeeks() {
         });
     } catch (error) {
         console.error('Error loading weeks:', error);
+        if (listSection) listSection.innerHTML = '<p class="error">Error loading weeks.</p>';
     }
 }
 
