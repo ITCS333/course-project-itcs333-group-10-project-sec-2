@@ -40,6 +40,9 @@
 // ============================================================================
 
 // TODO: Set headers for JSON response and CORS
+session_start();
+$_SESSION['initialized'] = true;
+
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
