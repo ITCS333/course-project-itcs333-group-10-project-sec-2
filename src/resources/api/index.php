@@ -1,4 +1,7 @@
 <?php
+session_start();
+header('Content-Type: application/json');
+
 // CONFIG CONSTANTS HERE
 require_once __DIR__ . '/helpers.php';
 
@@ -51,9 +54,9 @@ $mockComments = [
 ];
 
 $mockUsers = [
-    ["id" => 1, "name" => "Admin", "role" => "admin"],
-    ["id" => 2, "name" => "Jane Doe", "role" => "user"],
-    ["id" => 3, "name" => "John Smith", "role" => "user"]
+    ["id" => 1, "name" => "Admin", "role" => "admin", "email" => "admin@example.com", "password" => password_hash("admin123", PASSWORD_DEFAULT)],
+    ["id" => 2, "name" => "Jane Doe", "role" => "user", "email" => "jane@example.com", "password" => password_hash("jane123", PASSWORD_DEFAULT)],
+    ["id" => 3, "name" => "John Smith", "role" => "user", "email" => "john@example.com", "password" => password_hash("john123", PASSWORD_DEFAULT)]
 ];
 
 // -------------------------------------------------------------
@@ -119,6 +122,60 @@ $router->get('/users', function () use ($handler, $mockUsers) {
 // -------------------------------------------------------------
 // POST ROUTES
 // -------------------------------------------------------------
+
+$router->post('/login', function () use (&$mockUsers) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        echo json_encode(["error" => "Invalid request"]);
+        return;
+    }
+
+    $raw = file_get_contents('php://input');
+    $data = json_decode($raw, true);
+
+    $email = isset($data['email']) ? filter_var($data['email'], FILTER_VALIDATE_EMAIL) : false;
+    $pass  = $data['password'] ?? '';
+
+    if (!$email) {
+        echo json_encode(["error" => "Invalid email"]);
+        return;
+    }
+
+    try {
+        $pdo = null;
+
+        if (defined('DB_DSN') && defined('DB_USER') && defined('DB_PASS')) {
+            $pdo = new PDO(DB_DSN, DB_USER, DB_PASS);
+        }
+
+        if ($pdo instanceof PDO) {
+            $stmt = $pdo->prepare("SELECT id, email, password FROM users WHERE email = :email");
+            $stmt->execute(['email' => $email]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user && password_verify($pass, $user['password'])) {
+                $_SESSION['user_id'] = $user['id'];
+                echo json_encode(["success" => true, "user_id" => $user['id']]);
+                return;
+            }
+
+            echo json_encode(["success" => false, "error" => "Login failed"]);
+            return;
+        }
+
+        foreach ($mockUsers as $u) {
+            if (($u['email'] ?? '') === $email && password_verify($pass, $u['password'])) {
+                $_SESSION['user_id'] = $u['id'];
+                echo json_encode(["success" => true, "user_id" => $u['id']]);
+                return;
+            }
+        }
+
+        echo json_encode(["success" => false, "error" => "Login failed"]);
+
+    } catch (PDOException $e) {
+        echo json_encode(["error" => $e->getMessage()]);
+    }
+});
 
 // Create a comment
 $router->post('/comments', function () use ($handler, &$mockComments) {
@@ -190,7 +247,7 @@ $router->put('/posts/:slug', function ($params) use ($handler, &$mockPosts) {
 });
 
 // -------------------------------------------------------------
-– DELETE ROUTES
+// DELETE ROUTES
 // -------------------------------------------------------------
 
 $router->delete('/posts/:slug', function ($params) use ($handler, &$mockPosts) {
