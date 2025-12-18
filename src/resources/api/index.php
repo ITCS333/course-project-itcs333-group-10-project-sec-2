@@ -3,7 +3,7 @@ session_start();
 header('Content-Type: application/json');
 
 // CONFIG CONSTANTS HERE
-require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/../../common/Database.php';
 
 // Instantiate base classes
 $handler = new RequestHandler();
